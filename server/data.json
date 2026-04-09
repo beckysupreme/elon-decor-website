@@ -1,0 +1,87 @@
+{
+  "bookings": [
+    {
+      "id": "1775036744963",
+      "name": "Bereket Getnet",
+      "phone": "+251918710133",
+      "email": "beckygetnet8@gmail.com",
+      "eventType": "birthday",
+      "eventDate": "2026-04-16",
+      "eventLocation": "Addis Ababa",
+      "guestCount": "",
+      "budget": "10k-25k",
+      "message": "safdgf",
+      "status": "confirmed",
+      "createdAt": "2026-04-01T09:45:44.963Z"
+    },
+    {
+      "id": "1775038025592",
+      "name": "khkjgkhghg",
+      "phone": "+251918710133",
+      "email": "beckygetnet8@gmail.com",
+      "eventType": "engagement",
+      "eventDate": "2026-04-28",
+      "eventLocation": "Addis Ababa",
+      "guestCount": "",
+      "budget": "50k-100k",
+      "message": "jk",
+      "status": "confirmed",
+      "createdAt": "2026-04-01T10:07:05.592Z"
+    }
+  ],
+  "gallery": [
+    {
+      "id": "1775203182739",
+      "title": "Sample",
+      "category": "birthday",
+      "description": "It's A sample to check the decoration",
+      "imageUrl": "https://res.cloudinary.com/dmcg9rgws/image/upload/v1775203179/elon-decor-gallery/mqd1hgwjg23xpkonhvdu.jpg",
+      "publicId": "elon-decor-gallery/mqd1hgwjg23xpkonhvdu",
+      "type": "image",
+      "uploadedAt": "2026-04-03T07:59:42.740Z"
+    }
+  ],
+  "packages": [
+    {
+      "id": "1775204677516",
+      "name": "asgvbhjdnm",
+      "price": "20000",
+      "features": [
+        "asdffggm",
+        "dsfn",
+        "vb"
+      ],
+      "popular": true,
+      "description": "sfdghjm,",
+      "createdAt": "2026-04-03T08:24:37.516Z"
+    }
+  ],
+  "videos": [
+    {
+      "id": "1775206723011",
+      "title": "svbn",
+      "category": "wedding",
+      "description": "sdfgh",
+      "videoUrl": "https://res.cloudinary.com/dmcg9rgws/video/upload/v1775206719/elon-decor-videos/yvtihnqgcgdtzbmidwcq.mp4",
+      "publicId": "elon-decor-videos/yvtihnqgcgdtzbmidwcq",
+      "type": "file",
+      "uploadedAt": "2026-04-03T08:58:43.011Z"
+    },
+    {
+      "id": "1775632117509",
+      "title": "Wedding",
+      "category": "wedding",
+      "videoUrl": "https://www.youtube.com/watch?v=rWMv_nMzvy4",
+      "description": "check",
+      "thumbnail": "",
+      "type": "link",
+      "uploadedAt": "2026-04-08T07:08:37.509Z"
+    }
+  ],
+  "admin": {
+    "id": "1775547404660",
+    "username": "admin",
+    "password": "$2b$10$K6AIcnB6xvSiQR9585Q1bOJYH6tv7IY93wCggz4SQo1q2M.kuTnFK",
+    "createdAt": "2026-04-07T07:36:44.660Z"
+  }
+}

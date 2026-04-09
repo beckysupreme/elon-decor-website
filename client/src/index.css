@@ -1,0 +1,124 @@
+@import "tailwindcss";
+
+/* Import Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+/* Custom theme configuration */
+@theme {
+  /* Colors */
+  --color-gold: #FFD700;
+  --color-dark-gold: #B8860B;
+  --color-black-bg: #0A0A0A;
+  --color-dark-gray: #1A1A1A;
+  
+  /* Font families */
+  --font-playfair: 'Playfair Display', serif;
+  --font-poppins: 'Poppins', sans-serif;
+}
+
+/* Base styles */
+@layer base {
+  body {
+    background-color: var(--color-black-bg);
+    color: white;
+    font-family: var(--font-poppins);
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-playfair);
+  }
+}
+
+/* ===== CUSTOM UTILITY CLASSES FOR BUTTONS ===== */
+@layer utilities {
+  /* Gold background utility */
+  .bg-gold {
+    background-color: #FFD700;
+  }
+  
+  /* Dark gold background utility */
+  .bg-dark-gold {
+    background-color: #B8860B;
+  }
+  
+  /* Gold text utility */
+  .text-gold {
+    color: #FFD700;
+  }
+  
+  /* Gold border utility */
+  .border-gold {
+    border-color: #FFD700;
+  }
+  
+  /* Hover utilities */
+  .hover\:bg-gold:hover {
+    background-color: #FFD700;
+  }
+  
+  .hover\:bg-dark-gold:hover {
+    background-color: #B8860B;
+  }
+  
+  .hover\:text-gold:hover {
+    color: #FFD700;
+  }
+  
+  .hover\:border-gold:hover {
+    border-color: #FFD700;
+  }
+  
+  /* Text gradient */
+  .text-gradient {
+    background: linear-gradient(to right, var(--color-gold), var(--color-dark-gold));
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
+  
+  /* Primary button - ONE CLASS FOR ALL BUTTONS */
+  .btn-primary {
+    background-color: #FFD700;
+    color: black;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  .btn-now{
+    width: 100%;
+    padding: 0.5rem 1rem; /* px-4 py-2 */
+    background-color: aliceblue;
+    border: 1px solid #374151; /* border-gray-700 */
+    border-radius: 0.5rem; /* rounded-lg */
+    color: black;
+  }
+  .btn-now:focus {
+   outline: none;
+   border-color: var(--color-gold); /* or a specific gold color */
+}
+  
+  .btn-primary:hover {
+    background-color: #B8860B;
+  }
+  
+  .btn-primary:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  /* Secondary button */
+  .btn-secondary {
+    border: 2px solid #FFD700;
+    color: #FFD700;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #FFD700;
+    color: black;
+  }
+}
