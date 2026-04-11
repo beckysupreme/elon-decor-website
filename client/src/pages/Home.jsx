@@ -2,7 +2,7 @@ const Home = () => {
   return (
     <div>
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center justify-center bg-gradient-to-br from-[--color-black-bg] to-[--color-dark-gray]">
+      <section className="relative py-20 md:py-32 flex items-center justify-center bg-gradient-to-br from-[--color-black-bg] to-[--color-dark-gray]">
         <div className="absolute inset-0 bg-black/50"></div>
         <div className="relative text-center px-4 z-10">
           <h1 className="text-5xl md:text-7xl font-[--font-playfair] font-bold mb-4">

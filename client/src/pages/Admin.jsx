@@ -288,7 +288,7 @@ const deleteBooking = async (id) => {
       const filteredFeatures = packageForm.features.filter(f => f.trim());
       
       if (editingPackage) {
-        const response = await axios.put(`http://localhost:5000/api/packages/${editingPackage.id}`, {
+        const response = await axios.put(`http://localhost:5000/api/packages/${editingPackage._id}`, {
           ...packageForm,
           features: filteredFeatures
         });
