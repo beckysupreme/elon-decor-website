@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL,ADMIN_API_URL } from '../../../server/config';
 
 const Login = ({ setAdminLoggedIn }) => {
   const [username, setUsername] = useState('');
@@ -17,7 +18,7 @@ const Login = ({ setAdminLoggedIn }) => {
   useEffect(() => {
     const checkSetup = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/admin-auth/setup-required');
+        const response = await axios.get('${ADMIN_API_URL}/setup-required');
         setIsSetup(response.data.setupRequired);
       } catch (error) {
         console.error('Error checking setup:', error);
@@ -32,7 +33,7 @@ const Login = ({ setAdminLoggedIn }) => {
     setError('');
     
     try {
-      const response = await axios.post('http://localhost:5000/api/admin-auth/login', {
+      const response = await axios.post('${ADMIN_API_URL}/login', {
         username,
         password
       });
@@ -66,7 +67,7 @@ const Login = ({ setAdminLoggedIn }) => {
     setError('');
     
     try {
-      const response = await axios.post('http://localhost:5000/api/admin-auth/setup', {
+      const response = await axios.post('${ADMIN_API_URL}/setup', {
         username: setupData.username,
         password: setupData.password
       });

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_URL } from '../../../server/config';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('bookings');
@@ -77,7 +78,7 @@ const Admin = () => {
 
  const fetchBookings = async () => {
   try {
-    const response = await axios.get('http://localhost:5000/api/bookings');
+    const response = await axios.get('${API_URL}/bookings');
     if (response.data && response.data.success) {
       console.log('Bookings data:', response.data.data);
       // Log the first booking to see its structure
@@ -97,7 +98,7 @@ const Admin = () => {
 
   const fetchImages = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/gallery');
+      const response = await axios.get('${API_URL}/gallery');
       if (response.data && response.data.success) {
         setImages(response.data.data || []);
       } else {
@@ -111,7 +112,7 @@ const Admin = () => {
 
   const fetchVideos = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/videos');
+      const response = await axios.get('${API_URL}/videos');
       if (response.data && response.data.success) {
         setVideos(response.data.data || []);
       } else {
@@ -125,7 +126,7 @@ const Admin = () => {
 
   const fetchPackages = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/packages');
+      const response = await axios.get('${API_URL}/packages');
       if (response.data && response.data.success) {
         setPackages(response.data.data || []);
       } else {
@@ -144,7 +145,7 @@ const Admin = () => {
     }
     
     try {
-      const response = await axios.get(`http://localhost:5000/api/search?q=${searchQuery}`);
+      const response = await axios.get(`${API_URL}/search?q=${searchQuery}`);
       if (response.data && response.data.success) {
         setSearchResults(response.data.data);
       } else {
@@ -159,7 +160,7 @@ const Admin = () => {
   // Booking functions
   const updateBookingStatus = async (id, newStatus) => {
     try {
-      const response = await axios.patch(`http://localhost:5000/api/bookings/${id}/status`, {
+      const response = await axios.patch(`${API_URL}/bookings/${id}/status`, {
         status: newStatus
       });
       
@@ -187,7 +188,7 @@ const deleteBooking = async (id) => {
   
   if (window.confirm('Are you sure you want to delete this booking?')) {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/bookings/${bookingId}`);
+      const response = await axios.delete(`${API_URL}/bookings/${bookingId}`);
       console.log('Delete response:', response.data);
       
       if (response.data && response.data.success) {
@@ -266,7 +267,7 @@ const deleteBooking = async (id) => {
   // Verify token
   const verifyToken = async () => {
     try {
-      await axios.get('http://localhost:5000/api/admin-auth/verify');
+      await axios.get('${API_URL}/admin-auth/verify');
     } catch (error) {
       localStorage.removeItem('adminToken');
       navigate('/login');
@@ -288,7 +289,7 @@ const deleteBooking = async (id) => {
       const filteredFeatures = packageForm.features.filter(f => f.trim());
       
       if (editingPackage) {
-        const response = await axios.put(`http://localhost:5000/api/packages/${editingPackage._id}`, {
+        const response = await axios.put(`${API_URL}/packages/${editingPackage._id}`, {
           ...packageForm,
           features: filteredFeatures
         });
@@ -296,7 +297,7 @@ const deleteBooking = async (id) => {
           alert('Package updated successfully!');
         }
       } else {
-        const response = await axios.post('http://localhost:5000/api/packages', {
+        const response = await axios.post('${API_URL}/packages', {
           ...packageForm,
           features: filteredFeatures
         });
@@ -326,7 +327,7 @@ const deletePackage = async (id) => {
   
   if (window.confirm('Are you sure you want to delete this package?')) {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/packages/${packageId}`);
+      const response = await axios.delete(`${API_URL}/packages/${packageId}`);
       if (response.data && response.data.success) {
         alert('Package deleted successfully');
         await fetchPackages();
@@ -364,7 +365,7 @@ const deletePackage = async (id) => {
     formData.append('description', imageForm.description);
     
     try {
-      const response = await axios.post('http://localhost:5000/api/gallery/upload', formData, {
+      const response = await axios.post('${API_URL}/gallery/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
@@ -397,7 +398,7 @@ const deleteImage = async (id) => {
   
   if (window.confirm('Are you sure you want to delete this image?')) {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/gallery/${imageId}`);
+      const response = await axios.delete(`${API_URL}/gallery/${imageId}`);
       if (response.data && response.data.success) {
         alert('Image deleted successfully');
         await fetchImages();
@@ -435,7 +436,7 @@ const deleteImage = async (id) => {
     formData.append('description', videoFileForm.description);
     
     try {
-      const response = await axios.post('http://localhost:5000/api/videos/upload', formData, {
+      const response = await axios.post('${API_URL}/videos/upload', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
@@ -465,7 +466,7 @@ const deleteImage = async (id) => {
     
     setAddingVideoLink(true);
     try {
-      const response = await axios.post('http://localhost:5000/api/videos/link', videoLinkForm);
+      const response = await axios.post('${API_URL}/videos/link', videoLinkForm);
       if (response.data && response.data.success) {
         alert('Video link added successfully!');
         setVideoLinkForm({ title: '', category: 'wedding', videoUrl: '', description: '' });
@@ -491,7 +492,7 @@ const deleteVideo = async (id) => {
   
   if (window.confirm('Are you sure you want to delete this video?')) {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/videos/${videoId}`);
+      const response = await axios.delete(`${API_URL}/videos/${videoId}`);
       if (response.data && response.data.success) {
         alert('Video deleted successfully');
         await fetchVideos();
