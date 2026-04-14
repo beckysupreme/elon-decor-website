@@ -10,7 +10,7 @@ const Gallery = () => {
   
   const categories = ['all', 'wedding', 'birthday', 'engagement', 'corporate', 'other'];
   
-  // YOUR EXACT BACKEND URL
+  // Direct backend URL
   const BACKEND_URL = 'https://elon-decor-api.onrender.com';
   
   useEffect(() => {
@@ -22,26 +22,21 @@ const Gallery = () => {
       setLoading(true);
       setError(null);
       
-      // Build the URL correctly
       let url = `${BACKEND_URL}/api/gallery`;
       if (selectedCategory !== 'all') {
         url += `?category=${selectedCategory}`;
       }
       
-      console.log('Fetching from:', url);
-      
       const response = await axios.get(url);
-      console.log('Response:', response.data);
       
       if (response.data && response.data.success) {
         setImages(response.data.data || []);
       } else {
         setImages([]);
-        setError('No images found');
       }
     } catch (error) {
-      console.error('Fetch error:', error);
-      setError(`Failed to load images: ${error.message}`);
+      console.error('Error fetching gallery:', error);
+      setError('Failed to load gallery images');
       setImages([]);
     } finally {
       setLoading(false);
@@ -64,7 +59,6 @@ const Gallery = () => {
       <div className="min-h-screen bg-[--color-black-bg] flex items-center justify-center">
         <div className="text-center">
           <div className="text-2xl text-[--color-gold] mb-4">Loading...</div>
-          <p className="text-gray-400">Please wait while we load the gallery</p>
         </div>
       </div>
     );
@@ -97,7 +91,6 @@ const Gallery = () => {
 
   return (
     <div className="min-h-screen bg-[--color-black-bg]">
-      {/* Hero Section */}
       <section className="bg-gradient-to-r from-[--color-black-bg] to-[--color-dark-gray] py-20">
         <div className="container mx-auto px-4 text-center">
           <h1 className="text-4xl md:text-5xl font-[--font-playfair] font-bold mb-4">
@@ -109,7 +102,6 @@ const Gallery = () => {
         </div>
       </section>
       
-      {/* Category Filter */}
       <section className="container mx-auto px-4 py-12">
         <div className="flex flex-wrap justify-center gap-3 mb-12">
           {categories.map((category) => (
@@ -127,7 +119,6 @@ const Gallery = () => {
           ))}
         </div>
         
-        {/* Gallery Grid */}
         {images.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-gray-400">No images found in this category.</p>
@@ -149,9 +140,6 @@ const Gallery = () => {
                   <div className="p-4 w-full">
                     <h3 className="text-white font-semibold text-lg">{image.title || 'Untitled'}</h3>
                     <p className="text-gray-300 text-sm">{getCategoryLabel(image.category)}</p>
-                    {image.description && (
-                      <p className="text-gray-400 text-sm mt-1">{image.description}</p>
-                    )}
                   </div>
                 </div>
               </div>
@@ -160,7 +148,6 @@ const Gallery = () => {
         )}
       </section>
 
-      {/* Lightbox Modal */}
       {selectedImage && (
         <div 
           className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-4"
@@ -181,7 +168,6 @@ const Gallery = () => {
             <div className="mt-4 text-center">
               <h3 className="text-2xl font-semibold text-white">{selectedImage.title || 'Untitled'}</h3>
               <p className="text-gray-400 mt-2">{selectedImage.description || 'No description available'}</p>
-              <p className="text-sm text-gray-500 mt-1">Category: {getCategoryLabel(selectedImage.category)}</p>
             </div>
           </div>
         </div>
