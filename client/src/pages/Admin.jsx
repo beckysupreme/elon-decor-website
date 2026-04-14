@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { API_URL } from '../../../server/config';
+import config from '../../../server/config';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('bookings');
@@ -78,7 +78,7 @@ const Admin = () => {
 
  const fetchBookings = async () => {
   try {
-    const response = await axios.get('${API_URL}/bookings');
+    const response = await axios.get(config.BOOKINGS_URL);
     if (response.data && response.data.success) {
       console.log('Bookings data:', response.data.data);
       // Log the first booking to see its structure
@@ -98,7 +98,7 @@ const Admin = () => {
 
   const fetchImages = async () => {
     try {
-      const response = await axios.get('${API_URL}/gallery');
+      const response = await axios.get(config.GALLERY_URL);
       if (response.data && response.data.success) {
         setImages(response.data.data || []);
       } else {
@@ -112,7 +112,7 @@ const Admin = () => {
 
   const fetchVideos = async () => {
     try {
-      const response = await axios.get('${API_URL}/videos');
+      const response = await axios.get(config.VIDEOS_URL);
       if (response.data && response.data.success) {
         setVideos(response.data.data || []);
       } else {
@@ -126,7 +126,7 @@ const Admin = () => {
 
   const fetchPackages = async () => {
     try {
-      const response = await axios.get('${API_URL}/packages');
+      const response = await axios.get(config.PACKAGES_URL);
       if (response.data && response.data.success) {
         setPackages(response.data.data || []);
       } else {
@@ -160,7 +160,7 @@ const Admin = () => {
   // Booking functions
   const updateBookingStatus = async (id, newStatus) => {
     try {
-      const response = await axios.patch(`${API_URL}/bookings/${id}/status`, {
+      const response = await axios.patch(`${config.BOOKINGS_URL}/${id}/status`, {
         status: newStatus
       });
       
@@ -188,7 +188,7 @@ const deleteBooking = async (id) => {
   
   if (window.confirm('Are you sure you want to delete this booking?')) {
     try {
-      const response = await axios.delete(`${API_URL}/bookings/${bookingId}`);
+      const response = await axios.delete(`${config.BOOKINGS_URL}/${bookingId}`);
       console.log('Delete response:', response.data);
       
       if (response.data && response.data.success) {
@@ -289,7 +289,7 @@ const deleteBooking = async (id) => {
       const filteredFeatures = packageForm.features.filter(f => f.trim());
       
       if (editingPackage) {
-        const response = await axios.put(`${API_URL}/packages/${editingPackage._id}`, {
+        const response = await axios.put(`${config.PACKAGES_URL}/${editingPackage._id}`, {
           ...packageForm,
           features: filteredFeatures
         });
@@ -297,7 +297,7 @@ const deleteBooking = async (id) => {
           alert('Package updated successfully!');
         }
       } else {
-        const response = await axios.post('${API_URL}/packages', {
+        const response = await axios.post(config.PACKAGES_URL, {
           ...packageForm,
           features: filteredFeatures
         });
@@ -327,7 +327,7 @@ const deletePackage = async (id) => {
   
   if (window.confirm('Are you sure you want to delete this package?')) {
     try {
-      const response = await axios.delete(`${API_URL}/packages/${packageId}`);
+      const response = await axios.delete(`${config.PACKAGES_URL}/${packageId}`);
       if (response.data && response.data.success) {
         alert('Package deleted successfully');
         await fetchPackages();
@@ -365,7 +365,7 @@ const deletePackage = async (id) => {
     formData.append('description', imageForm.description);
     
     try {
-      const response = await axios.post('${API_URL}/gallery/upload', formData, {
+      const response = await axios.post(`${config.GALLERY_URL}/upload`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
@@ -398,7 +398,7 @@ const deleteImage = async (id) => {
   
   if (window.confirm('Are you sure you want to delete this image?')) {
     try {
-      const response = await axios.delete(`${API_URL}/gallery/${imageId}`);
+      const response = await axios.delete(`${config.GALLERY_URL}/${imageId}`);
       if (response.data && response.data.success) {
         alert('Image deleted successfully');
         await fetchImages();
@@ -436,7 +436,7 @@ const deleteImage = async (id) => {
     formData.append('description', videoFileForm.description);
     
     try {
-      const response = await axios.post('${API_URL}/videos/upload', formData, {
+      const response = await axios.post(`${config.VIDEOS_URL}/upload`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
@@ -466,7 +466,7 @@ const deleteImage = async (id) => {
     
     setAddingVideoLink(true);
     try {
-      const response = await axios.post('${API_URL}/videos/link', videoLinkForm);
+      const response = await axios.post(`${config.VIDEOS_URL}//link`, videoLinkForm);
       if (response.data && response.data.success) {
         alert('Video link added successfully!');
         setVideoLinkForm({ title: '', category: 'wedding', videoUrl: '', description: '' });
@@ -492,7 +492,7 @@ const deleteVideo = async (id) => {
   
   if (window.confirm('Are you sure you want to delete this video?')) {
     try {
-      const response = await axios.delete(`${API_URL}/videos/${videoId}`);
+      const response = await axios.delete(`${config.VIDEOS_URL}/${videoId}`);
       if (response.data && response.data.success) {
         alert('Video deleted successfully');
         await fetchVideos();

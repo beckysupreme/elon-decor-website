@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_URL } from '../../../server/config';
+import config from '../../../server/config';
 
 const Packages = () => {
   const [packages, setPackages] = useState([]);
@@ -12,7 +12,7 @@ const Packages = () => {
   
   const fetchPackages = async () => {
     try {
-      const response = await axios.get('${API_URL}/packages');
+      const response = await axios.get(config.PACKAGES_URL);
       if (response.data && response.data.success) {
         setPackages(response.data.data || []);
       }

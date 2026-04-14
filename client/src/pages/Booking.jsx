@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState } from 'react';
-import { API_URL } from '../../../server/config';
+import config from '../../../server/config';
 
 // Form validation schema
 const bookingSchema = z.object({
@@ -40,7 +40,7 @@ const Booking = () => {
     
     try {
       // Send booking data to backend
-      const response = await fetch('${API_URL}/bookings', {
+      const response = await fetch(config.BOOKINGS_URL, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

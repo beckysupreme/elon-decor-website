@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_URL } from '../../../server/config';
+import config from '../../../server/config';
 
 const Videos = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -21,7 +21,7 @@ const Videos = () => {
       setError(null);
       const url = selectedCategory === 'all' 
         ? '${API_URL}/videos'
-        : `${API_URL}/videos?category=${selectedCategory}`;
+        : `${config.VIDEOS_URL}?category=${selectedCategory}`;
       
       const response = await axios.get(url);
       if (response.data && response.data.success) {

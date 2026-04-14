@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { API_URL } from '../../../server/config';
+import config from '../../../server/config';
 
 const Gallery = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -21,7 +21,7 @@ const Gallery = () => {
       setError(null);
       const url = selectedCategory === 'all' 
         ? '${API_URL}/gallery'
-        : `${ API_URL }/gallery?category=${selectedCategory}`;
+        : `${config.GALLERY_URL}?category=${selectedCategory}`;
       
       const response = await axios.get(url);
       if (response.data && response.data.success) {
