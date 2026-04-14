@@ -9,6 +9,7 @@ const Videos = () => {
   const [selectedVideo, setSelectedVideo] = useState(null);
   
   const categories = ['all', 'wedding', 'birthday', 'engagement', 'corporate', 'other'];
+  const BACKEND_URL = 'https://elon-decor-api.onrender.com';
   
   useEffect(() => {
     fetchVideos();
