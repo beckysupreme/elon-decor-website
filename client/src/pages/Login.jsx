@@ -27,63 +27,58 @@ const Login = ({ setAdminLoggedIn }) => {
   }, []);
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+  e.preventDefault();
+  setLoading(true);
+  setError('');
+  
+  try {
+    const response = await axios.post('https://elon-decor-api.onrender.com/api/admin-auth/login', {
+      username,
+      password
+    });
     
-    try {
-      const response = await axios.post(`${config.ADMIN_API_URL}/login`, {
-        username,
-        password
-      });
-      
-      if (response.data.success) {
-        localStorage.setItem('adminToken', response.data.token);
-        localStorage.setItem('adminUsername', response.data.admin.username);
-        setAdminLoggedIn(true);
-        navigate('/admin');
-      }
-    } catch (error) {
-      setError(error.response?.data?.message || 'Login failed');
-    } finally {
-      setLoading(false);
+    if (response.data.success) {
+      localStorage.setItem('adminToken', response.data.token);
+      localStorage.setItem('adminUsername', response.data.admin.username);
+      setAdminLoggedIn(true);
+      navigate('/admin');
     }
-  };
+  } catch (error) {
+    setError(error.response?.data?.message || 'Login failed');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleSetup = async (e) => {
-    e.preventDefault();
-    if (setupData.password !== setupData.confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
+  e.preventDefault();
+  if (setupData.password !== setupData.confirmPassword) {
+    setError('Passwords do not match');
+    return;
+  }
+  
+  setLoading(true);
+  setError('');
+  
+  try {
+    const response = await axios.post('https://elon-decor-api.onrender.com/api/admin-auth/setup', {
+      username: setupData.username,
+      password: setupData.password
+    });
     
-    if (setupData.password.length < 6) {
-      setError('Password must be at least 6 characters');
-      return;
+    if (response.data.success) {
+      alert('Admin account created successfully! Please login.');
+      setShowSetup(false);
+      setUsername(setupData.username);
+      setPassword('');
+      setSetupData({ username: '', password: '', confirmPassword: '' });
     }
-    
-    setLoading(true);
-    setError('');
-    
-    try {
-      const response = await axios.post(`${config.ADMIN_API_URL}/setup`, {
-        username: setupData.username,
-        password: setupData.password
-      });
-      
-      if (response.data.success) {
-        alert('Admin account created successfully! Please login.');
-        setShowSetup(false);
-        setUsername(setupData.username);
-        setPassword('');
-        setSetupData({ username: '', password: '', confirmPassword: '' });
-      }
-    } catch (error) {
-      setError(error.response?.data?.message || 'Setup failed');
-    } finally {
-      setLoading(false);
-    }
-  };
+  } catch (error) {
+    setError(error.response?.data?.message || 'Setup failed');
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-[--color-black-bg] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">

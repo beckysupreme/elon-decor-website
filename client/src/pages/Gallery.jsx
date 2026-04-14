@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { GALLERY_URL } from '../../../server/config';
 
 const Gallery = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -16,29 +15,32 @@ const Gallery = () => {
   }, [selectedCategory]);
 
   const fetchImages = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const url = selectedCategory === 'all' 
-        ? GALLERY_URL
-        : `${GALLERY_URL}?category=${selectedCategory}`;
-      
-      console.log('Fetching images from:', url); // Debug log
-      
-      const response = await axios.get(url);
-      if (response.data && response.data.success) {
-        setImages(response.data.data || []);
-      } else {
-        setImages([]);
-      }
-    } catch (error) {
-      console.error('Error fetching gallery:', error);
-      setError('Failed to load gallery images. Please make sure the backend server is running.');
+  try {
+    setLoading(true);
+    setError(null);
+    
+    // DIRECT URL - REPLACE with your actual Render URL
+    const baseUrl = 'https://elon-decor-api.onrender.com/api/gallery';
+    const url = selectedCategory === 'all' 
+      ? baseUrl
+      : `${baseUrl}?category=${selectedCategory}`;
+    
+    console.log('Fetching from:', url);
+    
+    const response = await axios.get(url);
+    if (response.data && response.data.success) {
+      setImages(response.data.data || []);
+    } else {
       setImages([]);
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching gallery:', error);
+    setError('Failed to load gallery images.');
+    setImages([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const getCategoryLabel = (category) => {
     const labels = {

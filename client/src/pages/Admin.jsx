@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { BOOKINGS_URL,GALLERY_URL,VIDEOS_URL,PACKAGES_URL,ADMIN_AUTH_URL } from '../../../server/config';
 
 const Admin = () => {
   const [activeTab, setActiveTab] = useState('bookings');
@@ -16,7 +14,6 @@ const Admin = () => {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [selectedImage, setSelectedImage] = useState(null);
   const [selectedVideo, setSelectedVideo] = useState(null);
-  const navigate = useNavigate();
   
   // Package modal states
   const [showPackageModal, setShowPackageModal] = useState(false);
@@ -59,6 +56,9 @@ const Admin = () => {
   });
   const [addingVideoLink, setAddingVideoLink] = useState(false);
 
+  // PRODUCTION API URL - REPLACE WITH YOUR ACTUAL RENDER URL
+  const API_BASE_URL = 'https://elon-decor-api.onrender.com/api';
+
   // Fetch data on load
   useEffect(() => {
     fetchAllData();
@@ -76,29 +76,23 @@ const Admin = () => {
     setLoading(false);
   };
 
- const fetchBookings = async () => {
-  try {
-    const response = await axios.get(BOOKINGS_URL);
-    if (response.data && response.data.success) {
-      console.log('Bookings data:', response.data.data);
-      // Log the first booking to see its structure
-      if (response.data.data && response.data.data.length > 0) {
-        console.log('First booking structure:', response.data.data[0]);
-        console.log('ID field:', response.data.data[0]._id);
+  const fetchBookings = async () => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/bookings`);
+      if (response.data && response.data.success) {
+        setBookings(response.data.data || []);
+      } else {
+        setBookings([]);
       }
-      setBookings(response.data.data || []);
-    } else {
+    } catch (error) {
+      console.error('Error fetching bookings:', error);
       setBookings([]);
     }
-  } catch (error) {
-    console.error('Error fetching bookings:', error);
-    setBookings([]);
-  }
-};
+  };
 
   const fetchImages = async () => {
     try {
-      const response = await axios.get(GALLERY_URL);
+      const response = await axios.get(`${API_BASE_URL}/gallery`);
       if (response.data && response.data.success) {
         setImages(response.data.data || []);
       } else {
@@ -112,7 +106,7 @@ const Admin = () => {
 
   const fetchVideos = async () => {
     try {
-      const response = await axios.get(VIDEOS_URL);
+      const response = await axios.get(`${API_BASE_URL}/videos`);
       if (response.data && response.data.success) {
         setVideos(response.data.data || []);
       } else {
@@ -126,7 +120,7 @@ const Admin = () => {
 
   const fetchPackages = async () => {
     try {
-      const response = await axios.get(PACKAGES_URL);
+      const response = await axios.get(`${API_BASE_URL}/packages`);
       if (response.data && response.data.success) {
         setPackages(response.data.data || []);
       } else {
@@ -145,7 +139,7 @@ const Admin = () => {
     }
     
     try {
-      const response = await axios.get(`${API_URL}/search?q=${searchQuery}`);
+      const response = await axios.get(`${API_BASE_URL}/search?q=${searchQuery}`);
       if (response.data && response.data.success) {
         setSearchResults(response.data.data);
       } else {
@@ -160,7 +154,7 @@ const Admin = () => {
   // Booking functions
   const updateBookingStatus = async (id, newStatus) => {
     try {
-      const response = await axios.patch(`${BOOKINGS_URL}/${id}/status`, {
+      const response = await axios.patch(`${API_BASE_URL}/bookings/${id}/status`, {
         status: newStatus
       });
       
@@ -174,35 +168,20 @@ const Admin = () => {
     }
   };
 
-// Delete booking - FIXED
-const deleteBooking = async (id) => {
-  // Handle both id and _id
-  const bookingId = id?._id || id;
-  console.log('Delete button clicked, received ID:', id);
-  console.log('Using bookingId:', bookingId);
-  
-  if (!bookingId) {
-    alert('No booking ID found. Please refresh the page and try again.');
-    return;
-  }
-  
-  if (window.confirm('Are you sure you want to delete this booking?')) {
-    try {
-      const response = await axios.delete(`${BOOKINGS_URL}/${bookingId}`);
-      console.log('Delete response:', response.data);
-      
-      if (response.data && response.data.success) {
-        alert('Booking deleted successfully');
-        await fetchBookings();
-      } else {
-        alert('Failed to delete booking: ' + (response.data?.message || 'Unknown error'));
+  const deleteBooking = async (id) => {
+    if (window.confirm('Are you sure you want to delete this booking?')) {
+      try {
+        const response = await axios.delete(`${API_BASE_URL}/bookings/${id}`);
+        if (response.data && response.data.success) {
+          await fetchBookings();
+          alert('Booking deleted successfully');
+        }
+      } catch (error) {
+        console.error('Error deleting booking:', error);
+        alert('Failed to delete booking');
       }
-    } catch (error) {
-      console.error('Delete error:', error);
-      alert('Failed to delete booking: ' + (error.response?.data?.message || error.message));
     }
-  }
-};
+  };
 
   // Package functions
   const handleAddPackage = () => {
@@ -253,30 +232,6 @@ const deleteBooking = async (id) => {
     });
   };
 
-  // Add axios interceptor to add token to all requests
-   useEffect(() => {
-  const token = localStorage.getItem('adminToken');
-  if (!token) {
-    navigate('/login');
-    return;
-  }
-  
-  // Add token to all axios requests
-  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-  
-  // Verify token
-  const verifyToken = async () => {
-    try {
-      await axios.get('${API_URL}/admin-auth/verify');
-    } catch (error) {
-      localStorage.removeItem('adminToken');
-      navigate('/login');
-    }
-  };
-  verifyToken();
-}, [navigate]);
-
-
   const savePackage = async (e) => {
     e.preventDefault();
     if (!packageForm.name || !packageForm.price) {
@@ -289,7 +244,7 @@ const deleteBooking = async (id) => {
       const filteredFeatures = packageForm.features.filter(f => f.trim());
       
       if (editingPackage) {
-        const response = await axios.put(`${PACKAGES_URL}/${editingPackage._id}`, {
+        const response = await axios.put(`${API_BASE_URL}/packages/${editingPackage._id}`, {
           ...packageForm,
           features: filteredFeatures
         });
@@ -297,7 +252,7 @@ const deleteBooking = async (id) => {
           alert('Package updated successfully!');
         }
       } else {
-        const response = await axios.post(config.PACKAGES_URL, {
+        const response = await axios.post(`${API_BASE_URL}/packages`, {
           ...packageForm,
           features: filteredFeatures
         });
@@ -315,31 +270,20 @@ const deleteBooking = async (id) => {
     }
   };
 
-// Delete package - FIXED
-const deletePackage = async (id) => {
-  const packageId = id?._id || id;
-  console.log('Deleting package with ID:', packageId);
-  
-  if (!packageId) {
-    alert('No package ID found');
-    return;
-  }
-  
-  if (window.confirm('Are you sure you want to delete this package?')) {
-    try {
-      const response = await axios.delete(`${PACKAGES_URL}/${packageId}`);
-      if (response.data && response.data.success) {
-        alert('Package deleted successfully');
-        await fetchPackages();
-      } else {
+  const deletePackage = async (id) => {
+    if (window.confirm('Are you sure you want to delete this package?')) {
+      try {
+        const response = await axios.delete(`${API_BASE_URL}/packages/${id}`);
+        if (response.data && response.data.success) {
+          alert('Package deleted successfully');
+          await fetchPackages();
+        }
+      } catch (error) {
+        console.error('Delete package error:', error);
         alert('Failed to delete package');
       }
-    } catch (error) {
-      console.error('Delete error:', error);
-      alert('Failed to delete package');
     }
-  }
-};
+  };
 
   // Image functions
   const handleImageFileChange = (e) => {
@@ -365,7 +309,7 @@ const deletePackage = async (id) => {
     formData.append('description', imageForm.description);
     
     try {
-      const response = await axios.post(`${GALLERY_URL}/upload`, formData, {
+      const response = await axios.post(`${API_BASE_URL}/gallery/upload`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
@@ -386,31 +330,20 @@ const deletePackage = async (id) => {
     }
   };
 
-// Delete image - FIXED
-const deleteImage = async (id) => {
-  const imageId = id?._id || id;
-  console.log('Deleting image with ID:', imageId);
-  
-  if (!imageId) {
-    alert('No image ID found');
-    return;
-  }
-  
-  if (window.confirm('Are you sure you want to delete this image?')) {
-    try {
-      const response = await axios.delete(`${GALLERY_URL}/${imageId}`);
-      if (response.data && response.data.success) {
-        alert('Image deleted successfully');
-        await fetchImages();
-      } else {
+  const deleteImage = async (id) => {
+    if (window.confirm('Are you sure you want to delete this image?')) {
+      try {
+        const response = await axios.delete(`${API_BASE_URL}/gallery/${id}`);
+        if (response.data && response.data.success) {
+          await fetchImages();
+          alert('Image deleted successfully');
+        }
+      } catch (error) {
+        console.error('Error deleting image:', error);
         alert('Failed to delete image');
       }
-    } catch (error) {
-      console.error('Delete error:', error);
-      alert('Failed to delete image');
     }
-  }
-};
+  };
 
   // Video functions
   const handleVideoFileChange = (e) => {
@@ -436,7 +369,7 @@ const deleteImage = async (id) => {
     formData.append('description', videoFileForm.description);
     
     try {
-      const response = await axios.post(`${VIDEOS_URL}/upload`, formData, {
+      const response = await axios.post(`${API_BASE_URL}/videos/upload`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
       
@@ -466,7 +399,7 @@ const deleteImage = async (id) => {
     
     setAddingVideoLink(true);
     try {
-      const response = await axios.post(`${VIDEOS_URL}//link`, videoLinkForm);
+      const response = await axios.post(`${API_BASE_URL}/videos/link`, videoLinkForm);
       if (response.data && response.data.success) {
         alert('Video link added successfully!');
         setVideoLinkForm({ title: '', category: 'wedding', videoUrl: '', description: '' });
@@ -480,31 +413,20 @@ const deleteImage = async (id) => {
     }
   };
 
-  // Delete video - FIXED
-const deleteVideo = async (id) => {
-  const videoId = id?._id || id;
-  console.log('Deleting video with ID:', videoId);
-  
-  if (!videoId) {
-    alert('No video ID found');
-    return;
-  }
-  
-  if (window.confirm('Are you sure you want to delete this video?')) {
-    try {
-      const response = await axios.delete(`${VIDEOS_URL}/${videoId}`);
-      if (response.data && response.data.success) {
-        alert('Video deleted successfully');
-        await fetchVideos();
-      } else {
+  const deleteVideo = async (id) => {
+    if (window.confirm('Are you sure you want to delete this video?')) {
+      try {
+        const response = await axios.delete(`${API_BASE_URL}/videos/${id}`);
+        if (response.data && response.data.success) {
+          await fetchVideos();
+          alert('Video deleted successfully');
+        }
+      } catch (error) {
+        console.error('Error deleting video:', error);
         alert('Failed to delete video');
       }
-    } catch (error) {
-      console.error('Delete error:', error);
-      alert('Failed to delete video');
     }
-  }
-};
+  };
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -559,10 +481,11 @@ const deleteVideo = async (id) => {
       </div>
     );
   }
+
   return (
     <div className="min-h-screen bg-[--color-black-bg]">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[--color-black-bg] to-[--color-dark-gray] border-b border-[--color-gold]/20">
+      <div className="bg-gradient-to-r from-[--color-black-bg] to-[--color-dark-gray] border-b border-[--color-gold]/20 sticky top-0 z-20">
         <div className="container mx-auto px-4 py-6">
           <h1 className="text-3xl font-[--font-playfair] font-bold">
             Admin <span className="text-[--color-gold]">Dashboard</span>
@@ -685,7 +608,7 @@ const deleteVideo = async (id) => {
                 <h3 className="text-lg font-semibold text-[--color-gold] mb-2">Bookings ({searchResults.bookings.length})</h3>
                 <div className="space-y-2">
                   {searchResults.bookings.map(booking => (
-                    <div key={booking.id} className="bg-[--color-dark-gray] p-3 rounded-lg flex justify-between items-center">
+                    <div key={booking._id} className="bg-[--color-dark-gray] p-3 rounded-lg flex justify-between items-center">
                       <div>
                         <p className="font-semibold">{booking.name}</p>
                         <p className="text-sm text-gray-400">{booking.phone} - {formatEventType(booking.eventType)}</p>
@@ -707,7 +630,7 @@ const deleteVideo = async (id) => {
                 <h3 className="text-lg font-semibold text-[--color-gold] mb-2">Images ({searchResults.images.length})</h3>
                 <div className="grid grid-cols-3 gap-2">
                   {searchResults.images.map(image => (
-                    <div key={image.id} className="relative cursor-pointer" onClick={() => setSelectedImage(image)}>
+                    <div key={image._id} className="relative cursor-pointer" onClick={() => setSelectedImage(image)}>
                       <img src={image.imageUrl} alt={image.title} className="w-full h-24 object-cover rounded" />
                     </div>
                   ))}
@@ -720,7 +643,7 @@ const deleteVideo = async (id) => {
                 <h3 className="text-lg font-semibold text-[--color-gold] mb-2">Videos ({searchResults.videos.length})</h3>
                 <div className="space-y-2">
                   {searchResults.videos.map(video => (
-                    <div key={video.id} className="bg-[--color-dark-gray] p-3 rounded-lg flex justify-between items-center">
+                    <div key={video._id} className="bg-[--color-dark-gray] p-3 rounded-lg flex justify-between items-center">
                       <div>
                         <p className="font-semibold">{video.title}</p>
                         <p className="text-sm text-gray-400">{video.category}</p>
@@ -742,7 +665,7 @@ const deleteVideo = async (id) => {
                 <h3 className="text-lg font-semibold text-[--color-gold] mb-2">Packages ({searchResults.packages.length})</h3>
                 <div className="space-y-2">
                   {searchResults.packages.map(pkg => (
-                    <div key={pkg.id} className="bg-[--color-dark-gray] p-3 rounded-lg flex justify-between items-center">
+                    <div key={pkg._id} className="bg-[--color-dark-gray] p-3 rounded-lg flex justify-between items-center">
                       <div>
                         <p className="font-semibold">{pkg.name}</p>
                         <p className="text-sm text-gray-400">ETB {pkg.price}</p>
@@ -794,7 +717,7 @@ const deleteVideo = async (id) => {
                     </tr>
                   ) : (
                     bookings.map((booking) => (
-                      <tr key={booking.id} className="border-b border-gray-700 hover:bg-[--color-black-bg]/50">
+                      <tr key={booking._id} className="border-b border-gray-700 hover:bg-[--color-black-bg]/50">
                         <td className="px-6 py-4 font-medium">{booking.name}</td>
                         <td className="px-6 py-4">{booking.phone}</td>
                         <td className="px-6 py-4">{formatEventType(booking.eventType)}</td>
@@ -809,7 +732,7 @@ const deleteVideo = async (id) => {
                             <select
                               value={booking.status || 'pending'}
                               onChange={(e) => updateBookingStatus(booking._id, e.target.value)}
-                              className="btn-now"
+                              className="px-2 py-1 bg-[--color-black-bg] border border-gray-600 rounded text-sm"
                             >
                               <option value="pending">Pending</option>
                               <option value="contacted">Contacted</option>
@@ -842,7 +765,6 @@ const deleteVideo = async (id) => {
         {/* Images Tab */}
         {activeTab === 'images' && !searchResults && (
           <div>
-            {/* Upload Image Form */}
             <div className="bg-[--color-dark-gray] rounded-lg p-6 mb-6">
               <h3 className="text-lg font-semibold mb-4">📸 Upload New Image</h3>
               <form onSubmit={uploadImage} className="space-y-4">
@@ -862,7 +784,7 @@ const deleteVideo = async (id) => {
                     <select
                       value={imageForm.category}
                       onChange={(e) => setImageForm({...imageForm, category: e.target.value})}
-                      className="btn-now"
+                      className="w-full px-4 py-2 bg-[--color-black-bg] border border-gray-700 rounded-lg focus:outline-none focus:border-[--color-gold] text-white"
                     >
                       <option value="wedding">Wedding</option>
                       <option value="birthday">Birthday</option>
@@ -900,21 +822,20 @@ const deleteVideo = async (id) => {
                 <button
                   type="submit"
                   disabled={uploadingImage}
-                  className="btn-primary"
+                  className="btn-primary disabled:opacity-50"
                 >
                   {uploadingImage ? 'Uploading...' : 'Upload Image'}
                 </button>
               </form>
             </div>
 
-            {/* Images Grid */}
             <h3 className="text-lg font-semibold mb-4">📷 Gallery Images ({images?.length || 0})</h3>
             {!images || images.length === 0 ? (
               <div className="text-center py-12 text-gray-400">No images yet. Upload your first image above!</div>
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {images.map((image) => (
-                  <div key={image.id} className="bg-[--color-dark-gray] rounded-lg overflow-hidden group">
+                  <div key={image._id} className="bg-[--color-dark-gray] rounded-lg overflow-hidden group">
                     <div className="relative">
                       <img src={image.imageUrl} alt={image.title} className="w-full h-48 object-cover" />
                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
@@ -946,7 +867,6 @@ const deleteVideo = async (id) => {
         {/* Videos Tab */}
         {activeTab === 'videos' && !searchResults && (
           <div>
-            {/* Video Upload Options */}
             <div className="bg-[--color-dark-gray] rounded-lg p-6 mb-6">
               <h3 className="text-lg font-semibold mb-4">🎥 Add Video</h3>
               
@@ -991,7 +911,7 @@ const deleteVideo = async (id) => {
                       <select
                         value={videoFileForm.category}
                         onChange={(e) => setVideoFileForm({...videoFileForm, category: e.target.value})}
-                        className="btn-now"
+                        className="w-full px-4 py-2 bg-[--color-black-bg] border border-gray-700 rounded-lg focus:outline-none focus:border-[--color-gold] text-white"
                       >
                         <option value="wedding">Wedding</option>
                         <option value="birthday">Birthday</option>
@@ -1029,7 +949,7 @@ const deleteVideo = async (id) => {
                   <button
                     type="submit"
                     disabled={uploadingVideoFile}
-                    className="btn-primary"
+                    className="btn-primary disabled:opacity-50"
                   >
                     {uploadingVideoFile ? 'Uploading...' : 'Upload Video File'}
                   </button>
@@ -1087,7 +1007,7 @@ const deleteVideo = async (id) => {
                   <button
                     type="submit"
                     disabled={addingVideoLink}
-                    className="btn-primary"
+                    className="btn-primary disabled:opacity-50"
                   >
                     {addingVideoLink ? 'Adding...' : 'Add Video Link'}
                   </button>
@@ -1095,14 +1015,13 @@ const deleteVideo = async (id) => {
               )}
             </div>
 
-            {/* Videos List */}
             <h3 className="text-lg font-semibold mb-4">🎬 All Videos ({videos?.length || 0})</h3>
             {!videos || videos.length === 0 ? (
               <div className="text-center py-12 text-gray-400">No videos yet. Upload your first video above!</div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {videos.map((video) => (
-                  <div key={video.id} className="bg-[--color-dark-gray] rounded-lg overflow-hidden">
+                  <div key={video._id} className="bg-[--color-dark-gray] rounded-lg overflow-hidden">
                     <div className="relative pb-[56.25%]">
                       {video.type === 'file' ? (
                         <video 
@@ -1147,7 +1066,6 @@ const deleteVideo = async (id) => {
         {/* Packages Tab */}
         {activeTab === 'packages' && !searchResults && (
           <div>
-            {/* Add Package Button */}
             <div className="mb-6">
               <button
                 onClick={handleAddPackage}
@@ -1157,7 +1075,6 @@ const deleteVideo = async (id) => {
               </button>
             </div>
 
-            {/* Packages Grid */}
             {!packages || packages.length === 0 ? (
               <div className="text-center py-12 text-gray-400">
                 No packages yet. Click "Add New Package" to create one.
@@ -1166,7 +1083,7 @@ const deleteVideo = async (id) => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {packages.map((pkg) => (
                   <div 
-                    key={pkg.id}
+                    key={pkg._id}
                     className={`relative bg-[--color-dark-gray] rounded-lg overflow-hidden ${
                       pkg.popular ? 'border-2 border-[--color-gold]' : ''
                     }`}
@@ -1220,7 +1137,7 @@ const deleteVideo = async (id) => {
           <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4" onClick={() => setShowPackageModal(false)}>
             <div className="bg-[--color-dark-gray] rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
               <div className="sticky top-0 bg-[--color-dark-gray] px-6 py-4 border-b border-gray-700 flex justify-between items-center">
-                <h3 className="text-xl font-semibold">
+                <h3 className="text-xl font-semibold text-white">
                   {editingPackage ? 'Edit Package' : 'Add New Package'}
                 </h3>
                 <button onClick={() => setShowPackageModal(false)} className="text-gray-400 hover:text-white text-2xl">×</button>
@@ -1228,7 +1145,7 @@ const deleteVideo = async (id) => {
               <form onSubmit={savePackage} className="p-6 space-y-4">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-semibold mb-2">Package Name *</label>
+                    <label className="block text-sm font-semibold mb-2 text-white">Package Name *</label>
                     <input
                       type="text"
                       value={packageForm.name}
@@ -1238,7 +1155,7 @@ const deleteVideo = async (id) => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold mb-2">Price (ETB) *</label>
+                    <label className="block text-sm font-semibold mb-2 text-white">Price (ETB) *</label>
                     <input
                       type="text"
                       value={packageForm.price}
@@ -1251,7 +1168,7 @@ const deleteVideo = async (id) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-semibold mb-2">Description (Optional)</label>
+                  <label className="block text-sm font-semibold mb-2 text-white">Description (Optional)</label>
                   <textarea
                     value={packageForm.description}
                     onChange={(e) => setPackageForm({...packageForm, description: e.target.value})}
@@ -1261,7 +1178,7 @@ const deleteVideo = async (id) => {
                 </div>
                 
                 <div>
-                  <label className="block text-sm font-semibold mb-2">Features</label>
+                  <label className="block text-sm font-semibold mb-2 text-white">Features</label>
                   {packageForm.features.map((feature, index) => (
                     <div key={index} className="flex gap-2 mb-2">
                       <input
@@ -1297,25 +1214,25 @@ const deleteVideo = async (id) => {
                     onChange={(e) => setPackageForm({...packageForm, popular: e.target.checked})}
                     className="w-4 h-4 accent-[--color-gold]"
                   />
-                  <label htmlFor="popular" className="text-sm font-semibold">Mark as "Most Popular"</label>
+                  <label htmlFor="popular" className="text-sm font-semibold text-white">Mark as "Most Popular"</label>
                 </div>
                 
                 <div className="flex gap-3 pt-4">
-  <button
-    type="submit"
-    disabled={savingPackage}
-    className="flex-1 px-6 py-2 bg-yellow-500 text-black rounded-lg font-semibold hover:bg-yellow-600 disabled:opacity-50 transition-colors"
-  >
-    {savingPackage ? 'Saving...' : (editingPackage ? 'Update Package' : 'Add Package')}
-  </button>
-  <button
-    type="button"
-    onClick={() => setShowPackageModal(false)}
-    className="flex-1 px-6 py-2 bg-gray-600 text-white rounded-lg font-semibold hover:bg-gray-700 transition-colors"
-  >
-    Cancel
-  </button>
-</div>
+                  <button
+                    type="submit"
+                    disabled={savingPackage}
+                    className="flex-1 px-6 py-2 bg-[--color-gold] text-black rounded-lg font-semibold hover:bg-[--color-dark-gold] disabled:opacity-50 transition-colors"
+                  >
+                    {savingPackage ? 'Saving...' : (editingPackage ? 'Update Package' : 'Add Package')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowPackageModal(false)}
+                    className="flex-1 px-6 py-2 bg-gray-600 text-white rounded-lg font-semibold hover:bg-gray-700 transition-colors"
+                  >
+                    Cancel
+                  </button>
+                </div>
               </form>
             </div>
           </div>

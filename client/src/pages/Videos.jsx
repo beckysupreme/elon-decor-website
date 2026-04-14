@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { VIDEOS_URL } from '../../../server/config';
 
 const Videos = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -16,29 +15,32 @@ const Videos = () => {
   }, [selectedCategory]);
 
   const fetchVideos = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const url = selectedCategory === 'all' 
-        ? VIDEOS_URL
-        : `${VIDEOS_URL}?category=${selectedCategory}`;
-      
-      console.log('Fetching videos from:', url);
-      
-      const response = await axios.get(url);
-      if (response.data && response.data.success) {
-        setVideos(response.data.data || []);
-      } else {
-        setVideos([]);
-      }
-    } catch (error) {
-      console.error('Error fetching videos:', error);
-      setError('Failed to load videos');
+  try {
+    setLoading(true);
+    setError(null);
+    
+    // DIRECT URL - REPLACE with your actual Render URL
+    const baseUrl = 'https://elon-decor-api.onrender.com/api/videos';
+    const url = selectedCategory === 'all' 
+      ? baseUrl
+      : `${baseUrl}?category=${selectedCategory}`;
+    
+    console.log('Fetching from:', url);
+    
+    const response = await axios.get(url);
+    if (response.data && response.data.success) {
+      setVideos(response.data.data || []);
+    } else {
       setVideos([]);
-    } finally {
-      setLoading(false);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching videos:', error);
+    setError('Failed to load videos.');
+    setVideos([]);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const getCategoryLabel = (category) => {
     const labels = {

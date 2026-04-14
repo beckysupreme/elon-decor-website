@@ -2,7 +2,6 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState } from 'react';
-import { BOOKINGS_URL } from '../../../server/config';
 
 // Form validation schema
 const bookingSchema = z.object({
@@ -35,43 +34,37 @@ const Booking = () => {
   });
 
   const onSubmit = async (data) => {
-    setIsSubmitting(true);
-    setSubmitStatus(null);
+  setIsSubmitting(true);
+  setSubmitStatus(null);
+  
+  try {
+    const response = await fetch('https://elon-decor-api.onrender.com/api/bookings', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
     
-    try {
-      // Send booking data to backend
-      const response = await fetch(config.BOOKINGS_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-      
-      const result = await response.json();
-      
-      if (result.success) {
-        setSubmitStatus({
-          type: 'success',
-          message: 'Booking request sent successfully! We will contact you within 24 hours.',
-        });
-        reset(); // Clear the form
-      } else {
-        setSubmitStatus({
-          type: 'error',
-          message: result.message || 'Something went wrong. Please try again.',
-        });
-      }
-    } catch (error) {
-      console.error('Booking error:', error);
+    const result = await response.json();
+    
+    if (result.success) {
       setSubmitStatus({
-        type: 'error',
-        message: 'Something went wrong. Please try again or contact us directly.',
+        type: 'success',
+        message: 'Booking request sent successfully! We will contact you within 24 hours.',
       });
-    } finally {
-      setIsSubmitting(false);
+      reset();
     }
-  };
+  } catch (error) {
+    console.error('Booking error:', error);
+    setSubmitStatus({
+      type: 'error',
+      message: 'Something went wrong. Please try again.',
+    });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
 
   return (
     <div>

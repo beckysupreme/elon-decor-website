@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import { PACKAGES_URL } from '../../../server/config';
 
 const Packages = () => {
   const [packages, setPackages] = useState([]);
@@ -11,17 +10,16 @@ const Packages = () => {
   }, []);
   
   const fetchPackages = async () => {
-    try {
-      const response = await axios.get(config.PACKAGES_URL);
-      if (response.data && response.data.success) {
-        setPackages(response.data.data || []);
-      }
-    } catch (error) {
-      console.error('Error fetching packages:', error);
-    } finally {
-      setLoading(false);
+  try {
+    const response = await axios.get('https://elon-decor-api.onrender.com/api/packages');
+    if (response.data && response.data.success) {
+      setPackages(response.data.data || []);
     }
-  };
+  } catch (error) {
+    console.error('Error fetching packages:', error);
+    setPackages([]);
+  }
+};
   
   if (loading) {
     return (
