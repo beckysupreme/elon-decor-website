@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import config from '../../../server/config';
+import { PACKAGES_URL } from '../../../server/config';
 
 const Packages = () => {
   const [packages, setPackages] = useState([]);

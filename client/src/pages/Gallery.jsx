@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import config from '../../../server/config';
+import { GALLERY_URL } from '../../../server/config';
 
 const Gallery = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
@@ -20,8 +20,10 @@ const Gallery = () => {
       setLoading(true);
       setError(null);
       const url = selectedCategory === 'all' 
-        ? '${API_URL}/gallery'
-        : `${config.GALLERY_URL}?category=${selectedCategory}`;
+        ? GALLERY_URL
+        : `${GALLERY_URL}?category=${selectedCategory}`;
+      
+      console.log('Fetching images from:', url); // Debug log
       
       const response = await axios.get(url);
       if (response.data && response.data.success) {
@@ -137,7 +139,7 @@ const Gallery = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {images.map((image) => (
               <div 
-                key={image.id}
+                key={image._id}
                 className="group relative overflow-hidden rounded-lg cursor-pointer bg-[--color-dark-gray] hover:transform hover:scale-105 transition-all duration-300"
                 onClick={() => setSelectedImage(image)}
               >
@@ -179,7 +181,6 @@ const Gallery = () => {
             <div className="mt-4 text-center">
               <h3 className="text-2xl font-semibold text-white">{selectedImage.title || 'Untitled'}</h3>
               <p className="text-gray-400 mt-2">{selectedImage.description || 'No description available'}</p>
-              <p className="text-sm text-gray-500 mt-2">Category: {getCategoryLabel(selectedImage.category)}</p>
             </div>
           </div>
         </div>

@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useState } from 'react';
-import config from '../../../server/config';
+import { BOOKINGS_URL } from '../../../server/config';
 
 // Form validation schema
 const bookingSchema = z.object({

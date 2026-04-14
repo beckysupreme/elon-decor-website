@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import config from '../../../server/config';
 
 const Login = ({ setAdminLoggedIn }) => {
   const [username, setUsername] = useState('');
