@@ -17,7 +17,7 @@ const Login = ({ setAdminLoggedIn }) => {
   useEffect(() => {
     const checkSetup = async () => {
       try {
-        const response = await axios.get(`${config.ADMIN_API_URL}/setup-required`);
+        const response = await axios.get('https://elon-decor-api.onrender.com/api/admin-auth/setup-required');
         setIsSetup(response.data.setupRequired);
       } catch (error) {
         console.error('Error checking setup:', error);
