@@ -32,42 +32,39 @@ const Login = ({ setAdminLoggedIn }) => {
   }, []);
 
   const handleLogin = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
-    
-    console.log('Attempting login with username:', username);
-    
-    try {
-      const response = await axios.post(`${BACKEND_URL}/api/admin-auth/login`, {
-        username,
-        password
-      });
-      
-      console.log('Login response:', response.data);
-      
-      if (response.data.success) {
-        localStorage.setItem('adminToken', response.data.token);
-        localStorage.setItem('adminUsername', response.data.admin.username);
-        setAdminLoggedIn(true);
-        navigate('/admin');
-      } else {
-        setError(response.data.message || 'Login failed');
+  e.preventDefault();
+  setLoading(true);
+  setError('');
+
+  try {
+    const response = await axios.post(
+      'https://elon-decor-api.onrender.com/api/admin-auth/login',
+      {
+        username: username,
+        password: password,
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
       }
-    } catch (error) {
-      console.error('Login error:', error);
-      console.error('Error response:', error.response);
-      if (error.response) {
-        setError(error.response.data?.message || 'Login failed. Please check your credentials.');
-      } else if (error.request) {
-        setError('Cannot connect to server. Please make sure the backend is running.');
-      } else {
-        setError('An error occurred. Please try again.');
-      }
-    } finally {
-      setLoading(false);
+    );
+
+    if (response.data.success) {
+      localStorage.setItem('adminToken', response.data.token);
+      localStorage.setItem('adminUsername', response.data.admin.username);
+      setAdminLoggedIn(true);
+      navigate('/admin');
+    } else {
+      setError(response.data.message || 'Login failed');
     }
-  };
+  } catch (err) {
+    console.error('Login error:', err);
+    setError(err.response?.data?.message || 'Login failed. Check console for details.');
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleSetup = async (e) => {
     e.preventDefault();
