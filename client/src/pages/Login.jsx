@@ -12,10 +12,8 @@ const Login = ({ setAdminLoggedIn }) => {
   const [isSetup, setIsSetup] = useState(false);
   
   const navigate = useNavigate();
-  
   const BACKEND_URL = 'https://elon-decor-api.onrender.com';
 
-  // Check if setup is required
   useEffect(() => {
     const checkSetup = async () => {
       try {
@@ -34,14 +32,9 @@ const Login = ({ setAdminLoggedIn }) => {
     setError('');
     
     try {
-      // IMPORTANT: This must be a POST request
       const response = await axios.post(`${BACKEND_URL}/api/admin-auth/login`, {
-        username: username,
-        password: password
-      }, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        username,
+        password
       });
       
       if (response.data.success) {
@@ -49,16 +42,9 @@ const Login = ({ setAdminLoggedIn }) => {
         localStorage.setItem('adminUsername', response.data.admin.username);
         setAdminLoggedIn(true);
         navigate('/admin');
-      } else {
-        setError(response.data.message || 'Login failed');
       }
     } catch (error) {
-      console.error('Login error:', error);
-      if (error.response) {
-        setError(error.response.data?.message || 'Login failed');
-      } else {
-        setError('Cannot connect to server');
-      }
+      setError(error.response?.data?.message || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -81,7 +67,7 @@ const Login = ({ setAdminLoggedIn }) => {
       });
       
       if (response.data.success) {
-        alert('Admin account created successfully! Please login.');
+        alert('Admin account created! Please login.');
         setShowSetup(false);
         setUsername(setupData.username);
         setPassword('');
@@ -95,20 +81,15 @@ const Login = ({ setAdminLoggedIn }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[--color-black-bg] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[#0A0A0A] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
         <div className="text-center">
-          <h1 className="text-4xl font-[--font-playfair] font-bold">
-            Elon <span className="text-[--color-gold]">Decor</span>
+          <h1 className="text-4xl font-bold text-white">
+            Elon <span className="text-[#FFD700]">Decor</span>
           </h1>
-          <h2 className="mt-6 text-3xl font-[--font-playfair] font-bold text-white">
+          <h2 className="mt-6 text-3xl font-bold text-white">
             Admin {!showSetup ? 'Login' : 'Setup'}
           </h2>
-          <p className="mt-2 text-sm text-gray-400">
-            {!showSetup 
-              ? 'Enter your credentials to access the dashboard' 
-              : 'Create your admin account'}
-          </p>
         </div>
         
         {!showSetup ? (
@@ -121,54 +102,42 @@ const Login = ({ setAdminLoggedIn }) => {
             
             <div className="space-y-4">
               <div>
-                <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
-                  Username
-                </label>
                 <input
-                  id="username"
-                  name="username"
                   type="text"
                   required
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
-                  className="appearance-none relative block w-full px-3 py-2 border border-gray-700 bg-[--color-dark-gray] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[--color-gold] focus:border-transparent sm:text-sm"
-                  placeholder="Enter your username"
+                  className="w-full px-3 py-2 border border-gray-700 bg-[#1A1A1A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFD700]"
+                  placeholder="Username"
                 />
               </div>
               
               <div>
-                <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-                  Password
-                </label>
                 <input
-                  id="password"
-                  name="password"
                   type="password"
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none relative block w-full px-3 py-2 border border-gray-700 bg-[--color-dark-gray] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[--color-gold] focus:border-transparent sm:text-sm"
-                  placeholder="Enter your password"
+                  className="w-full px-3 py-2 border border-gray-700 bg-[#1A1A1A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFD700]"
+                  placeholder="Password"
                 />
               </div>
             </div>
 
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-black bg-[--color-gold] hover:bg-[--color-dark-gold] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--color-gold] disabled:opacity-50"
-              >
-                {loading ? 'Logging in...' : 'Sign in'}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-2 px-4 bg-[#FFD700] text-black rounded-lg font-semibold hover:bg-[#B8860B] disabled:opacity-50"
+            >
+              {loading ? 'Logging in...' : 'Sign in'}
+            </button>
             
             {isSetup && (
               <div className="text-center">
                 <button
                   type="button"
                   onClick={() => setShowSetup(true)}
-                  className="text-sm text-[--color-gold] hover:text-[--color-dark-gold] transition-colors"
+                  className="text-sm text-[#FFD700] hover:text-[#B8860B]"
                 >
                   First time? Create admin account
                 </button>
@@ -185,69 +154,52 @@ const Login = ({ setAdminLoggedIn }) => {
             
             <div className="space-y-4">
               <div>
-                <label htmlFor="setup-username" className="block text-sm font-medium text-gray-300 mb-2">
-                  Username
-                </label>
                 <input
-                  id="setup-username"
-                  name="username"
                   type="text"
                   required
                   value={setupData.username}
                   onChange={(e) => setSetupData({...setupData, username: e.target.value})}
-                  className="appearance-none relative block w-full px-3 py-2 border border-gray-700 bg-[--color-dark-gray] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[--color-gold] focus:border-transparent sm:text-sm"
-                  placeholder="Choose a username"
+                  className="w-full px-3 py-2 border border-gray-700 bg-[#1A1A1A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFD700]"
+                  placeholder="Username"
                 />
               </div>
               
               <div>
-                <label htmlFor="setup-password" className="block text-sm font-medium text-gray-300 mb-2">
-                  Password
-                </label>
                 <input
-                  id="setup-password"
-                  name="password"
                   type="password"
                   required
                   value={setupData.password}
                   onChange={(e) => setSetupData({...setupData, password: e.target.value})}
-                  className="appearance-none relative block w-full px-3 py-2 border border-gray-700 bg-[--color-dark-gray] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[--color-gold] focus:border-transparent sm:text-sm"
-                  placeholder="Choose a password (min 6 characters)"
+                  className="w-full px-3 py-2 border border-gray-700 bg-[#1A1A1A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFD700]"
+                  placeholder="Password (min 6 characters)"
                 />
               </div>
               
               <div>
-                <label htmlFor="confirm-password" className="block text-sm font-medium text-gray-300 mb-2">
-                  Confirm Password
-                </label>
                 <input
-                  id="confirm-password"
-                  name="confirm-password"
                   type="password"
                   required
                   value={setupData.confirmPassword}
                   onChange={(e) => setSetupData({...setupData, confirmPassword: e.target.value})}
-                  className="appearance-none relative block w-full px-3 py-2 border border-gray-700 bg-[--color-dark-gray] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[--color-gold] focus:border-transparent sm:text-sm"
-                  placeholder="Confirm your password"
+                  className="w-full px-3 py-2 border border-gray-700 bg-[#1A1A1A] text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFD700]"
+                  placeholder="Confirm Password"
                 />
               </div>
             </div>
 
-            <div>
-              <button
-                type="submit"
-                disabled={loading}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-black bg-[--color-gold] hover:bg-[--color-dark-gold] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--color-gold] disabled:opacity-50"
-              >
-                {loading ? 'Creating...' : 'Create Admin Account'}
-              </button>
-            </div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-2 px-4 bg-[#FFD700] text-black rounded-lg font-semibold hover:bg-[#B8860B] disabled:opacity-50"
+            >
+              {loading ? 'Creating...' : 'Create Admin Account'}
+            </button>
             
             <div className="text-center">
               <button
                 type="button"
                 onClick={() => setShowSetup(false)}
-                className="text-sm text-[--color-gold] hover:text-[--color-dark-gold] transition-colors"
+                className="text-sm text-[#FFD700] hover:text-[#B8860B]"
               >
                 Back to Login
               </button>
