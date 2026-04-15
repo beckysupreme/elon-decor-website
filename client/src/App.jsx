@@ -17,12 +17,12 @@ import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
 
-  console.log('=== DEBUG INFO ===');
-  console.log('API_URL:', config.API_URL);
-  console.log('BOOKINGS_URL:', config.BOOKINGS_URL);
-  console.log('GALLERY_URL:', config.GALLERY_URL);
-  console.log('Environment:', import.meta.env.MODE);
-  console.log('==================');
+  // console.log('=== DEBUG INFO ===');
+  // console.log('API_URL:', config.API_URL);
+  // console.log('BOOKINGS_URL:', config.BOOKINGS_URL);
+  // console.log('GALLERY_URL:', config.GALLERY_URL);
+  // console.log('Environment:', import.meta.env.MODE);
+  // console.log('==================');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
 
