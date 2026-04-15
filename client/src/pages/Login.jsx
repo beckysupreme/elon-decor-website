@@ -19,52 +19,50 @@ const Login = ({ setAdminLoggedIn }) => {
   useEffect(() => {
     const checkSetup = async () => {
       try {
-        console.log('Checking if setup required...');
         const response = await axios.get(`${BACKEND_URL}/api/admin-auth/setup-required`);
-        console.log('Setup required response:', response.data);
         setIsSetup(response.data.setupRequired);
       } catch (error) {
         console.error('Error checking setup:', error);
-        setError('Cannot connect to server. Please check if backend is running.');
       }
     };
     checkSetup();
   }, []);
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError('');
-
-  try {
-    const response = await axios.post(
-      'https://elon-decor-api.onrender.com/api/admin-auth/login',
-      {
+    e.preventDefault();
+    setLoading(true);
+    setError('');
+    
+    try {
+      // IMPORTANT: This must be a POST request
+      const response = await axios.post(`${BACKEND_URL}/api/admin-auth/login`, {
         username: username,
-        password: password,
-      },
-      {
+        password: password
+      }, {
         headers: {
-          'Content-Type': 'application/json',
-        },
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (response.data.success) {
+        localStorage.setItem('adminToken', response.data.token);
+        localStorage.setItem('adminUsername', response.data.admin.username);
+        setAdminLoggedIn(true);
+        navigate('/admin');
+      } else {
+        setError(response.data.message || 'Login failed');
       }
-    );
-
-    if (response.data.success) {
-      localStorage.setItem('adminToken', response.data.token);
-      localStorage.setItem('adminUsername', response.data.admin.username);
-      setAdminLoggedIn(true);
-      navigate('/admin');
-    } else {
-      setError(response.data.message || 'Login failed');
+    } catch (error) {
+      console.error('Login error:', error);
+      if (error.response) {
+        setError(error.response.data?.message || 'Login failed');
+      } else {
+        setError('Cannot connect to server');
+      }
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    console.error('Login error:', err);
-    setError(err.response?.data?.message || 'Login failed. Check console for details.');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleSetup = async (e) => {
     e.preventDefault();
@@ -73,15 +71,8 @@ const Login = ({ setAdminLoggedIn }) => {
       return;
     }
     
-    if (setupData.password.length < 6) {
-      setError('Password must be at least 6 characters');
-      return;
-    }
-    
     setLoading(true);
     setError('');
-    
-    console.log('Creating admin account...');
     
     try {
       const response = await axios.post(`${BACKEND_URL}/api/admin-auth/setup`, {
@@ -89,20 +80,15 @@ const Login = ({ setAdminLoggedIn }) => {
         password: setupData.password
       });
       
-      console.log('Setup response:', response.data);
-      
       if (response.data.success) {
         alert('Admin account created successfully! Please login.');
         setShowSetup(false);
         setUsername(setupData.username);
         setPassword('');
         setSetupData({ username: '', password: '', confirmPassword: '' });
-      } else {
-        setError(response.data.message || 'Setup failed');
       }
     } catch (error) {
-      console.error('Setup error:', error);
-      setError(error.response?.data?.message || 'Setup failed. Please try again.');
+      setError(error.response?.data?.message || 'Setup failed');
     } finally {
       setLoading(false);
     }
@@ -111,7 +97,6 @@ const Login = ({ setAdminLoggedIn }) => {
   return (
     <div className="min-h-screen bg-[--color-black-bg] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full space-y-8">
-        {/* Logo/Header */}
         <div className="text-center">
           <h1 className="text-4xl font-[--font-playfair] font-bold">
             Elon <span className="text-[--color-gold]">Decor</span>
@@ -127,7 +112,6 @@ const Login = ({ setAdminLoggedIn }) => {
         </div>
         
         {!showSetup ? (
-          // Login Form
           <form className="mt-8 space-y-6" onSubmit={handleLogin}>
             {error && (
               <div className="bg-red-500/20 border border-red-500 text-red-400 px-4 py-3 rounded-lg text-sm text-center">
@@ -192,7 +176,6 @@ const Login = ({ setAdminLoggedIn }) => {
             )}
           </form>
         ) : (
-          // Setup Form
           <form className="mt-8 space-y-6" onSubmit={handleSetup}>
             {error && (
               <div className="bg-red-500/20 border border-red-500 text-red-400 px-4 py-3 rounded-lg text-sm text-center">
