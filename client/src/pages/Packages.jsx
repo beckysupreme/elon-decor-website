@@ -143,7 +143,7 @@ const Packages = () => {
                 </ul>
                 <a 
                   href="/booking" 
-                  className="block text-center bg-[--color-gold] text-black px-6 py-3 rounded-lg font-semibold hover:bg-[--color-dark-gold] transition-all duration-300"
+                  className="btn-now"
                 >
                   Book Now
                 </a>

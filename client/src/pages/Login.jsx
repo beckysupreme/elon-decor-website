@@ -12,73 +12,104 @@ const Login = ({ setAdminLoggedIn }) => {
   const [isSetup, setIsSetup] = useState(false);
   
   const navigate = useNavigate();
+  
+  const BACKEND_URL = 'https://elon-decor-api.onrender.com';
 
   // Check if setup is required
   useEffect(() => {
     const checkSetup = async () => {
       try {
-        const response = await axios.get('https://elon-decor-api.onrender.com/api/admin-auth/setup-required');
+        console.log('Checking if setup required...');
+        const response = await axios.get(`${BACKEND_URL}/api/admin-auth/setup-required`);
+        console.log('Setup required response:', response.data);
         setIsSetup(response.data.setupRequired);
       } catch (error) {
         console.error('Error checking setup:', error);
+        setError('Cannot connect to server. Please check if backend is running.');
       }
     };
     checkSetup();
   }, []);
 
   const handleLogin = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  setError('');
-  
-  try {
-    const response = await axios.post('https://elon-decor-api.onrender.com/api/admin-auth/login', {
-      username,
-      password
-    });
+    e.preventDefault();
+    setLoading(true);
+    setError('');
     
-    if (response.data.success) {
-      localStorage.setItem('adminToken', response.data.token);
-      localStorage.setItem('adminUsername', response.data.admin.username);
-      setAdminLoggedIn(true);
-      navigate('/admin');
+    console.log('Attempting login with username:', username);
+    
+    try {
+      const response = await axios.post(`${BACKEND_URL}/api/admin-auth/login`, {
+        username,
+        password
+      });
+      
+      console.log('Login response:', response.data);
+      
+      if (response.data.success) {
+        localStorage.setItem('adminToken', response.data.token);
+        localStorage.setItem('adminUsername', response.data.admin.username);
+        setAdminLoggedIn(true);
+        navigate('/admin');
+      } else {
+        setError(response.data.message || 'Login failed');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      console.error('Error response:', error.response);
+      if (error.response) {
+        setError(error.response.data?.message || 'Login failed. Please check your credentials.');
+      } else if (error.request) {
+        setError('Cannot connect to server. Please make sure the backend is running.');
+      } else {
+        setError('An error occurred. Please try again.');
+      }
+    } finally {
+      setLoading(false);
     }
-  } catch (error) {
-    setError(error.response?.data?.message || 'Login failed');
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   const handleSetup = async (e) => {
-  e.preventDefault();
-  if (setupData.password !== setupData.confirmPassword) {
-    setError('Passwords do not match');
-    return;
-  }
-  
-  setLoading(true);
-  setError('');
-  
-  try {
-    const response = await axios.post('https://elon-decor-api.onrender.com/api/admin-auth/setup', {
-      username: setupData.username,
-      password: setupData.password
-    });
-    
-    if (response.data.success) {
-      alert('Admin account created successfully! Please login.');
-      setShowSetup(false);
-      setUsername(setupData.username);
-      setPassword('');
-      setSetupData({ username: '', password: '', confirmPassword: '' });
+    e.preventDefault();
+    if (setupData.password !== setupData.confirmPassword) {
+      setError('Passwords do not match');
+      return;
     }
-  } catch (error) {
-    setError(error.response?.data?.message || 'Setup failed');
-  } finally {
-    setLoading(false);
-  }
-};
+    
+    if (setupData.password.length < 6) {
+      setError('Password must be at least 6 characters');
+      return;
+    }
+    
+    setLoading(true);
+    setError('');
+    
+    console.log('Creating admin account...');
+    
+    try {
+      const response = await axios.post(`${BACKEND_URL}/api/admin-auth/setup`, {
+        username: setupData.username,
+        password: setupData.password
+      });
+      
+      console.log('Setup response:', response.data);
+      
+      if (response.data.success) {
+        alert('Admin account created successfully! Please login.');
+        setShowSetup(false);
+        setUsername(setupData.username);
+        setPassword('');
+        setSetupData({ username: '', password: '', confirmPassword: '' });
+      } else {
+        setError(response.data.message || 'Setup failed');
+      }
+    } catch (error) {
+      console.error('Setup error:', error);
+      setError(error.response?.data?.message || 'Setup failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[--color-black-bg] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -145,7 +176,7 @@ const Login = ({ setAdminLoggedIn }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-primary w-full flex justify-center py-2 px-4"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-black bg-[--color-gold] hover:bg-[--color-dark-gold] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--color-gold] disabled:opacity-50"
               >
                 {loading ? 'Logging in...' : 'Sign in'}
               </button>
@@ -226,7 +257,7 @@ const Login = ({ setAdminLoggedIn }) => {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-primary w-full flex justify-center py-2 px-4"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-black bg-[--color-gold] hover:bg-[--color-dark-gold] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[--color-gold] disabled:opacity-50"
               >
                 {loading ? 'Creating...' : 'Create Admin Account'}
               </button>
