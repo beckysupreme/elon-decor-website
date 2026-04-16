@@ -485,7 +485,7 @@ const Admin = () => {
   return (
     <div className="min-h-screen bg-[--color-black-bg]">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[--color-black-bg] to-[--color-dark-gray] border-b border-[--color-gold]/20 sticky top-0 z-20">
+      <div className="bg-gradient-to-r from-[--color-black-bg] to-[--color-dark-gray] border-b border-[--color-gold]/20">
         <div className="container mx-auto px-4 py-6">
           <h1 className="text-3xl font-[--font-playfair] font-bold">
             Admin <span className="text-[--color-gold]">Dashboard</span>
