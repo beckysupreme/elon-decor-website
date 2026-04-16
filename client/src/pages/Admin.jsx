@@ -638,7 +638,7 @@ const Admin = () => {
                           <select
                             value={booking.status || 'pending'}
                             onChange={(e) => updateBookingStatus(booking._id, e.target.value)}
-                            className="px-2 py-1 bg-[--color-black-bg] border border-gray-600 rounded text-sm"
+                            className="btn-now"
                           >
                             <option value="pending">Pending</option>
                             <option value="contacted">Contacted</option>
@@ -689,7 +689,7 @@ const Admin = () => {
                     <select
                       value={imageForm.category}
                       onChange={(e) => setImageForm({...imageForm, category: e.target.value})}
-                      className="w-full px-4 py-2 bg-[--color-black-bg] border border-gray-700 rounded-lg focus:outline-none focus:border-[--color-gold] text-white"
+                      className="btn-now"
                     >
                       <option value="wedding">Wedding</option>
                       <option value="birthday">Birthday</option>
@@ -806,7 +806,7 @@ const Admin = () => {
                       <select
                         value={videoFileForm.category}
                         onChange={(e) => setVideoFileForm({...videoFileForm, category: e.target.value})}
-                        className="w-full px-4 py-2 bg-[--color-black-bg] border border-gray-700 rounded-lg focus:outline-none focus:border-[--color-gold] text-white"
+                        className="btn-now"
                       >
                         <option value="wedding">Wedding</option>
                         <option value="birthday">Birthday</option>

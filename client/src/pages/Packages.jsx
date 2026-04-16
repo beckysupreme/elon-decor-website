@@ -143,7 +143,7 @@ const Packages = () => {
                 </ul>
                 <a 
                   href="/booking" 
-                  className="btn-now"
+                  className="btn-primary"
                 >
                   Book Now
                 </a>
