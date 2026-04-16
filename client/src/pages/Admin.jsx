@@ -312,7 +312,7 @@ const Admin = () => {
       const response = await axios.post(`${API_BASE_URL}/gallery/upload`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
-      
+      console.log('Upload response:', response.data);
       if (response.data && response.data.success) {
         alert('Image uploaded successfully!');
         setSelectedImageFile(null);
