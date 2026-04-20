@@ -99,57 +99,59 @@ const Videos = () => {
         </div>
       </section>
       
-      <section className="container mx-auto px-4 py-12">
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-6 py-2 rounded-full capitalize transition-all duration-300 ${
-                selectedCategory === category
-                  ? 'bg-[--color-gold] text-black'
-                  : 'bg-[--color-dark-gray] text-white hover:bg-[--color-gold] hover:text-black'
-              }`}
-            >
-              {category === 'all' ? 'All' : getCategoryLabel(category)}
-            </button>
-          ))}
+<section className="videos-section">
+  <div className="category-filters">
+    {categories.map((category) => (
+      <button
+        key={category}
+        onClick={() => setSelectedCategory(category)}
+        className={`category-btn ${
+          selectedCategory === category ? 'active' : 'inactive'
+        }`}
+      >
+        {category === 'all' ? 'All' : getCategoryLabel(category)}
+      </button>
+    ))}
+  </div>
+  
+  {!videos || videos.length === 0 ? (
+    <div className="empty-state">
+      <p>No videos found.</p>
+    </div>
+  ) : (
+    <div className="videos-grid">
+      {videos.map((video) => (
+        <div 
+          key={video._id}
+          className="video-card"
+          onClick={() => setSelectedVideo(video)}
+        >
+          <div className="video-container">
+            {video.type === 'file' ? (
+              <video 
+                src={video.videoUrl} 
+                className="video-element"
+                muted
+                preload="metadata"
+              />
+            ) : (
+              <iframe
+                src={getEmbedUrl(video.videoUrl)}
+                title={video.title}
+                className="video-iframe"
+                allowFullScreen
+              ></iframe>
+            )}
+          </div>
+          <div className="video-info">
+            <h3 className="video-title">{video.title}</h3>
+            <p className="video-category">{getCategoryLabel(video.category)}</p>
+          </div>
         </div>
-        
-        {!videos || videos.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-400">No videos found.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {videos.map((video) => (
-              <div 
-                key={video._id}
-                className="bg-[--color-dark-gray] rounded-lg overflow-hidden cursor-pointer hover:transform hover:scale-105 transition-all duration-300"
-                onClick={() => setSelectedVideo(video)}
-              >
-                <div className="relative pb-[56.25%]">
-                  {video.type === 'file' ? (
-                    <video src={video.videoUrl} className="absolute top-0 left-0 w-full h-full object-cover" />
-                  ) : (
-                    <iframe
-                      src={getEmbedUrl(video.videoUrl)}
-                      title={video.title}
-                      className="absolute top-0 left-0 w-full h-full"
-                      frameBorder="0"
-                      allowFullScreen
-                    ></iframe>
-                  )}
-                </div>
-                <div className="p-4">
-                  <h3 className="font-semibold">{video.title}</h3>
-                  <p className="text-sm text-gray-400">{getCategoryLabel(video.category)}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
+      ))}
+    </div>
+  )}
+</section>
 
       {selectedVideo && (
         <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-4" onClick={() => setSelectedVideo(null)}>
