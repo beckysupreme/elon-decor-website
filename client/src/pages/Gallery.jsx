@@ -102,51 +102,49 @@ const Gallery = () => {
         </div>
       </section>
       
-      <section className="container mx-auto px-4 py-12">
-        <div className="flex flex-wrap justify-center gap-3 mb-12">
-          {categories.map((category) => (
-            <button
-              key={category}
-              onClick={() => setSelectedCategory(category)}
-              className={`px-6 py-2 rounded-full capitalize transition-all duration-300 ${
-                selectedCategory === category
-                  ? 'bg-[--color-gold] text-black'
-                  : 'bg-[--color-dark-gray] text-white hover:bg-[--color-gold] hover:text-black'
-              }`}
-            >
-              {category === 'all' ? 'All' : getCategoryLabel(category)}
-            </button>
-          ))}
+<section className="gallery-section">
+  <div className="category-filters">
+    {categories.map((category) => (
+      <button
+        key={category}
+        onClick={() => setSelectedCategory(category)}
+        className={`category-btn ${
+          selectedCategory === category ? 'active' : 'inactive'
+        }`}
+      >
+        {category === 'all' ? 'All' : getCategoryLabel(category)}
+      </button>
+    ))}
+  </div>
+  
+  {images.length === 0 ? (
+    <div className="empty-state">
+      <p>No images found in this category.</p>
+    </div>
+  ) : (
+    <div className="gallery-grid">
+      {images.map((image) => (
+        <div 
+          key={image._id}
+          className="gallery-card"
+          onClick={() => setSelectedImage(image)}
+        >
+          <img 
+            src={image.imageUrl} 
+            alt={image.title || 'Gallery image'}
+            className="gallery-image"
+          />
+          <div className="gallery-overlay">
+            <div className="overlay-content">
+              <h3 className="overlay-title">{image.title || 'Untitled'}</h3>
+              <p className="overlay-category">{getCategoryLabel(image.category)}</p>
+            </div>
+          </div>
         </div>
-        
-        {images.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-400">No images found in this category.</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {images.map((image) => (
-              <div 
-                key={image._id}
-                className="group relative overflow-hidden rounded-lg cursor-pointer bg-[--color-dark-gray] hover:transform hover:scale-105 transition-all duration-300"
-                onClick={() => setSelectedImage(image)}
-              >
-                <img 
-                  src={image.imageUrl} 
-                  alt={image.title || 'Gallery image'}
-                  className="w-full h-80 object-cover group-hover:scale-110 transition-transform duration-500"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end">
-                  <div className="p-4 w-full">
-                    <h3 className="text-white font-semibold text-lg">{image.title || 'Untitled'}</h3>
-                    <p className="text-gray-300 text-sm">{getCategoryLabel(image.category)}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </section>
+      ))}
+    </div>
+  )}
+</section>
 
       {selectedImage && (
         <div 
