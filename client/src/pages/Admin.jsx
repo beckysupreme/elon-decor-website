@@ -865,7 +865,7 @@ const Admin = () => {
                       <select
                         value={videoLinkForm.category}
                         onChange={(e) => setVideoLinkForm({...videoLinkForm, category: e.target.value})}
-                        className="w-full px-4 py-2 bg-[--color-black-bg] border border-gray-700 rounded-lg focus:outline-none focus:border-[--color-gold] text-white"
+                        className="btn-now"
                       >
                         <option value="wedding">Wedding</option>
                         <option value="birthday">Birthday</option>

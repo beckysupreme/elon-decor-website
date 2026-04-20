@@ -99,59 +99,58 @@ const Videos = () => {
         </div>
       </section>
       
-<section className="videos-section">
-  <div className="category-filters">
-    {categories.map((category) => (
-      <button
-        key={category}
-        onClick={() => setSelectedCategory(category)}
-        className={`category-btn ${
-          selectedCategory === category ? 'active' : 'inactive'
-        }`}
-      >
-        {category === 'all' ? 'All' : getCategoryLabel(category)}
-      </button>
-    ))}
-  </div>
-  
-  {!videos || videos.length === 0 ? (
-    <div className="empty-state">
-      <p>No videos found.</p>
-    </div>
-  ) : (
-    <div className="videos-grid">
-      {videos.map((video) => (
-        <div 
-          key={video._id}
-          className="video-card"
-          onClick={() => setSelectedVideo(video)}
-        >
-          <div className="video-container">
-            {video.type === 'file' ? (
-              <video 
-                src={video.videoUrl} 
-                className="video-element"
-                muted
-                preload="metadata"
-              />
-            ) : (
-              <iframe
-                src={getEmbedUrl(video.videoUrl)}
-                title={video.title}
-                className="video-iframe"
-                allowFullScreen
-              ></iframe>
-            )}
-          </div>
-          <div className="video-info">
-            <h3 className="video-title">{video.title}</h3>
-            <p className="video-category">{getCategoryLabel(video.category)}</p>
-          </div>
+      <section className="videos-section">
+        <div className="category-filters">
+          {categories.map((category) => (
+            <button
+              key={category}
+              onClick={() => setSelectedCategory(category)}
+              className={`category-btn ${selectedCategory === category ? 'active' : 'inactive'
+                }`}
+            >
+              {category === 'all' ? 'All' : getCategoryLabel(category)}
+            </button>
+          ))}
         </div>
-      ))}
-    </div>
-  )}
-</section>
+
+        {!videos || videos.length === 0 ? (
+          <div className="empty-state">
+            <p>No videos found.</p>
+          </div>
+        ) : (
+          <div className="videos-grid">
+            {videos.map((video) => (
+              <div
+                key={video._id}
+                className="video-card"
+                onClick={() => setSelectedVideo(video)}
+              >
+                <div className="video-container">
+                  {video.type === 'file' ? (
+                    <video
+                      src={video.videoUrl}
+                      className="video-element"
+                      muted
+                      preload="metadata"
+                    />
+                  ) : (
+                    <iframe
+                      src={getEmbedUrl(video.videoUrl)}
+                      title={video.title}
+                      className="video-iframe"
+                      allowFullScreen
+                    ></iframe>
+                  )}
+                </div>
+                <div className="video-info">
+                  <h3 className="video-title">{video.title}</h3>
+                  <p className="video-category">{getCategoryLabel(video.category)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
 
       {selectedVideo && (
         <div className="fixed inset-0 bg-black/95 flex items-center justify-center z-50 p-4" onClick={() => setSelectedVideo(null)}>
