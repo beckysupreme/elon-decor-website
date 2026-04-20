@@ -122,3 +122,161 @@
     color: black;
   }
 }
+
+
+
+/* Pricing Section Styles */
+.pricing-section {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 4rem 1rem;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .pricing-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* Card Styles */
+.pricing-card {
+  position: relative;
+  background-color: #1A1A1A;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.pricing-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+}
+
+.pricing-card.popular {
+  border: 2px solid #FFD700;
+  transform: scale(1.05);
+}
+
+@media (max-width: 768px) {
+  .pricing-card.popular {
+    transform: scale(1);
+  }
+}
+
+/* Popular Badge */
+.popular-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #FFD700;
+  color: black;
+  padding: 0.25rem 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-bottom-left-radius: 0.5rem;
+}
+
+/* Card Content */
+.card-content {
+  padding: 2rem;
+}
+
+.package-name {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  font-family: 'Playfair Display', serif;
+}
+
+.price {
+  margin-bottom: 1rem;
+}
+
+.price-amount {
+  font-size: 1.875rem;
+  font-weight: bold;
+  color: #FFD700;
+}
+
+.price-period {
+  color: #9ca3af;
+}
+
+.package-description {
+  color: #9ca3af;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+/* Features List */
+.features-list {
+  list-style: none;
+  margin: 0 0 2rem 0;
+  padding: 0;
+  space-y: 0.75rem;
+}
+
+.features-list li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #d1d5db;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
+}
+
+.checkmark {
+  color: #FFD700;
+  font-weight: bold;
+}
+
+/* Button */
+.book-btn {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+  background-color: #FFD700;
+  color: black;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.book-btn:hover {
+  background-color: #B8860B;
+  transform: translateY(-2px);
+}
+
+/* Footer Note */
+.pricing-note {
+  text-align: center;
+  color: #9ca3af;
+  margin-top: 3rem;
+  font-size: 0.875rem;
+}
+
+/* Container */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.py-16 {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.mt-12 {
+  margin-top: 3rem;
+}

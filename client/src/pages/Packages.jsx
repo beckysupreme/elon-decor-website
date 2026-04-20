@@ -109,53 +109,47 @@ const Packages = () => {
         </div>
       </section>
       
-      {/* Packages Grid */}
-      <section className="container mx-auto px-4 py-16">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {packages.map((pkg) => (
-            <div 
-              key={pkg._id}
-              className={`relative bg-[--color-dark-gray] rounded-lg overflow-hidden ${
-                pkg.popular ? 'border-2 border-[--color-gold] transform md:scale-105' : ''
-              }`}
-            >
-              {pkg.popular && (
-                <div className="absolute top-0 right-0 bg-[--color-gold] text-black px-4 py-1 text-sm font-semibold rounded-bl-lg">
-                  Most Popular
-                </div>
-              )}
-              <div className="p-8">
-                <h3 className="text-2xl font-bold mb-2">{pkg.name}</h3>
-                <div className="mb-4">
-                  <span className="text-3xl font-bold text-[--color-gold]">ETB {pkg.price}</span>
-                  <span className="text-gray-400"> / event</span>
-                </div>
-                {pkg.description && (
-                  <p className="text-gray-400 text-sm mb-4">{pkg.description}</p>
-                )}
-                <ul className="space-y-3 mb-8">
-                  {pkg.features?.map((feature, idx) => (
-                    <li key={idx} className="flex items-center gap-2 text-gray-300 text-sm">
-                      <span className="text-[--color-gold]">✓</span>
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <a 
-                  href="/booking" 
-                  className="btn-primary"
-                >
-                  Book Now
-                </a>
-              </div>
-            </div>
-          ))}
+<section className="pricing-section">
+  <div className="pricing-grid">
+    {packages.map((pkg) => (
+      <div 
+        key={pkg._id}
+        className={`pricing-card ${pkg.popular ? 'popular' : ''}`}
+      >
+        {pkg.popular && (
+          <div className="popular-badge">
+            Most Popular
+          </div>
+        )}
+        <div className="card-content">
+          <h3 className="package-name">{pkg.name}</h3>
+          <div className="price">
+            <span className="price-amount">ETB {pkg.price}</span>
+            <span className="price-period"> / event</span>
+          </div>
+          {pkg.description && (
+            <p className="package-description">{pkg.description}</p>
+          )}
+          <ul className="features-list">
+            {pkg.features?.map((feature, idx) => (
+              <li key={idx}>
+                <span className="checkmark">✓</span>
+                {feature}
+              </li>
+            ))}
+          </ul>
+          <a href="/booking" className="book-btn">
+            Book Now
+          </a>
         </div>
-        
-        <p className="text-center text-gray-400 mt-12 text-sm">
-          * Prices are starting from. Final price depends on specific requirements and customization.
-        </p>
-      </section>
+      </div>
+    ))}
+  </div>
+  
+  <p className="pricing-note">
+    * Prices are starting from. Final price depends on specific requirements and customization.
+  </p>
+</section>
     </div>
   );
 };
